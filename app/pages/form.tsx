@@ -80,7 +80,32 @@ const Form = () => {
     setCards([...cards, ...newCard]);
 
     setCardLenght(cardLenght + 1);
+    postSubmit(formData);
   };
+  const [error, setError] = useState(null);
+
+  const postSubmit = async (formData: StateValue) => {
+    event.preventDefault();
+    const requestData = {
+      name: formData.nameValue,
+      email: formData.emailValue,
+      phone: formData.phoneValue,
+    };
+    const requestJson = JSON.stringify(requestData);
+
+    const response = await fetch("https://jsonplaceholder.typicode.com/users", {
+      method: "POST",
+      body: requestJson,
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((error) => {
+        setError(error);
+      });
+  };
+
   return (
     <main>
       <div className="main_wrapper">
@@ -185,17 +210,14 @@ const Form = () => {
             <span>Submit</span>
           </button>
         </form>
-      </div>
-      <div>
-        {cards.map((card, i) => (
-          <p key={i}>Email:{card.phoneValue}</p>
-        ))}
+        {error ? (
+          <div className="result error">Ошибка</div>
+        ) : (
+          <div className="result">Успешно</div>
+        )}
       </div>
     </main>
   );
 };
 
 export default Form;
-function trigger(arg0: string) {
-  throw new Error("Function not implemented.");
-}
